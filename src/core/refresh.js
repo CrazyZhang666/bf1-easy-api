@@ -27,6 +27,8 @@ async function getAccountInfo() {
         if (!isEmptyStr(json.sid)) account.sid = json.sid;
         if (!isEmptyStr(json.authCode)) account.authCode = json.authCode;
         if (!isEmptyStr(json.sessionId)) account.sessionId = json.sessionId;
+
+        console.log("read account.json file sucess!");
     } catch (error) {
         console.log("read account.json file error! ", error.message);
     }
@@ -39,6 +41,8 @@ async function setAccountInfo() {
             JSON.stringify(account, null, "\t"),
             "utf-8"
         );
+
+        console.log("write account.json file sucess!");
     } catch (error) {
         console.log("write account.json file error! ", error.message);
     }
