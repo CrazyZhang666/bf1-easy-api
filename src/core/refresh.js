@@ -53,7 +53,7 @@ async function refreshRemidSid() {
     let location = response.headers.get("location");
     if (location.match("fid=")) {
         throw new Error(
-            "remid or sid invalid, please check account.json file!"
+            "remid or sid is invalid, please check account.json file!"
         );
     } else {
         account.authCode = location.replace(/.*code=(.*)/, "$1");
@@ -61,8 +61,10 @@ async function refreshRemidSid() {
         for (let i = 0; i < newCookie.length; i++) {
             if (newCookie[i].startsWith("remid=")) {
                 account.remid = newCookie[i].split("=")[1];
+                console.log("refresh remid success!");
             } else if (newCookie[i].startsWith("sid=")) {
                 account.sid = newCookie[i].split("=")[1];
+                console.log("refresh sid success!");
             }
         }
 
@@ -88,24 +90,22 @@ async function refreshSessionId() {
 }
 
 async function refresh() {
-    console.log("run get remid and sid task...");
+    console.log("run refresh remid and sid task...");
     await refreshRemidSid();
 
-    console.log("run get sessionId task...");
+    console.log("run refresh sessionId task...");
     await refreshSessionId();
 
     cron.schedule("0 0 */12 * * *", () => {
         console.log(
-            new Date().toLocaleString() +
-                " every 12 hours run auto refresh sessionId task..."
+            `${new Date().toLocaleString()} every 12 hours run auto refresh sessionId task...`
         );
         refreshSessionId();
     });
 
     cron.schedule("0 0 0 */7 * *", () => {
         console.log(
-            new Date().toLocaleString() +
-                " every 7 days run auto refresh remid and sid task..."
+            `${new Date().toLocaleString()} every 7 days run auto refresh remid and sid task...`
         );
         refreshRemidSid();
     });
