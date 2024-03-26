@@ -8,7 +8,7 @@ const port = 3000;
 await refresh();
 
 app.get("/", (req, res) => {
-    res.send("server is running");
+    res.send("server is running...");
 });
 
 app.get("/getPersonasByIds", async (req, res) => {

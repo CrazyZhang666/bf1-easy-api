@@ -28,7 +28,7 @@ async function getAccountInfo() {
         if (!isEmptyStr(json.authCode)) account.authCode = json.authCode;
         if (!isEmptyStr(json.sessionId)) account.sessionId = json.sessionId;
     } catch (error) {
-        console.log("读取文件时发生错误 ", error.message);
+        console.log("read account.json file error! ", error.message);
     }
 }
 
@@ -40,7 +40,7 @@ async function setAccountInfo() {
             "utf-8"
         );
     } catch (error) {
-        console.log("写入文件时发生错误 ", error.message);
+        console.log("write account.json file error! ", error.message);
     }
 }
 
@@ -52,7 +52,9 @@ async function refreshRemidSid() {
 
     let location = response.headers.get("location");
     if (location.match("fid=")) {
-        throw new Error("remid或sid失效, 请重新填写");
+        throw new Error(
+            "remid or sid invalid, please check account.json file!"
+        );
     } else {
         account.authCode = location.replace(/.*code=(.*)/, "$1");
         const newCookie = response.headers.get("set-cookie").split(";");
@@ -77,28 +79,34 @@ async function refreshSessionId() {
         const data = await response.json();
         account.sessionId = data.result.sessionId;
         global.sessionId = account.sessionId;
-        console.log("刷新sessionId成功");
+        console.log("refresh sessionId success!");
 
         await setAccountInfo();
     } else {
-        console.log("刷新sessionId出错");
+        console.log("refresh sessionId error!");
     }
 }
 
 async function refresh() {
-    console.log("开始执行获取remid和sid...");
+    console.log("run get remid and sid task...");
     await refreshRemidSid();
 
-    console.log("开始执行获取sessionId...");
+    console.log("run get sessionId task...");
     await refreshSessionId();
 
     cron.schedule("0 0 */12 * * *", () => {
-        console.log(new Date().toLocaleString() + " 每12小时刷新sessionId");
+        console.log(
+            new Date().toLocaleString() +
+                " every 12 hours run auto refresh sessionId task..."
+        );
         refreshSessionId();
     });
 
     cron.schedule("0 0 0 */7 * *", () => {
-        console.log(new Date().toLocaleString() + " 每7天刷新remid和sid");
+        console.log(
+            new Date().toLocaleString() +
+                " every 7 days run auto refresh remid and sid task..."
+        );
         refreshRemidSid();
     });
 }
