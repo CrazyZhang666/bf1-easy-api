@@ -1,0 +1,16 @@
+{
+    "name": "bf1-easy-api",
+    "version": "1.0.0",
+    "description": "bf1 easy api for marne",
+    "main": "src/main.js",
+    "type": "module",
+    "scripts": {
+        "dev": "node src/main.js"
+    },
+    "author": "CrazyZhang666",
+    "license": "ISC",
+    "dependencies": {
+        "express": "^4.19.1",
+        "node-cron": "^3.0.3"
+    }
+}
